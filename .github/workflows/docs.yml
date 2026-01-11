@@ -3,77 +3,45 @@ name: Documentation
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'docs/**'
-      - 'mkdocs.yml'
   pull_request:
-    paths:
-      - 'docs/**'
-      - 'mkdocs.yml'
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  validate:
-    name: Validate Documentation
+  build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-    - name: Cache Python packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('docs/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: |
+          pip install -r docs/requirements.txt
 
-    - name: Install dependencies
-      run: |
-        pip install -r docs/requirements.txt
+      - name: Build documentation
+        run: mkdocs build --strict
 
-    - name: Build documentation
-      run: mkdocs build --strict
-
-    - name: Check for broken links
-      run: |
-        # Install linkchecker
-        pip install linkchecker
-        # Build docs
-        mkdocs build
-        # Check links (allow some time for build)
-        # linkchecker site/ || true  # Don't fail on broken external links
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
 
   deploy:
-    name: Deploy Documentation
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: validate
-
+    needs: build
+    if: github.ref == 'refs/heads/main'
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Fetch all history for git info
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Install dependencies
-      run: |
-        pip install -r docs/requirements.txt
-
-    - name: Configure Git
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-
-    - name: Deploy to GitHub Pages
-      run: mkdocs gh-deploy --force
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

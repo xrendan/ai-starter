@@ -10,26 +10,21 @@
 ## Running Tests
 
 Run all tests:
-\'\'\'bash
-go test ./...
-\'\'\'
+```bash
+bun test
+```
 
-Run with coverage:
-\'\'\'bash
-go test -cover ./...
-\'\'\'
-
-Run verbose:
-\'\'\'bash
-go test -v ./...
-\'\'\'
+Run with watch mode:
+```bash
+bun test --watch
+```
 
 ## Writing Tests
 
 ### Unit Tests
 
 - Test individual functions and methods
-- Use table-driven tests for multiple cases
+- Use Bun's test framework
 - Mock external dependencies
 
 ### Integration Tests
@@ -40,35 +35,16 @@ go test -v ./...
 
 ### Example
 
-\'\'\'go
-func TestExample(t *testing.T) {
-    tests := []struct {
-        name    string
-        input   string
-        want    string
-        wantErr bool
-    }{
-        {
-            name:  "valid input",
-            input: "test",
-            want:  "result",
-        },
-        // Add more cases
-    }
+```typescript
+import { describe, test, expect } from 'bun:test';
 
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            got, err := Example(tt.input)
-            if (err != nil) != tt.wantErr {
-                t.Errorf("unexpected error: %v", err)
-            }
-            if got != tt.want {
-                t.Errorf("got %v, want %v", got, tt.want)
-            }
-        })
-    }
-}
-\'\'\'
+describe('example', () => {
+  test('should work correctly', () => {
+    const result = exampleFunction('input');
+    expect(result).toBe('expected');
+  });
+});
+```
 
 ## CI/CD
 

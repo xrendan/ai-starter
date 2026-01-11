@@ -1,6 +1,6 @@
-# ai-starter
+# test-project
 
-Welcome to the ai-starter documentation.
+Welcome to the test-project documentation.
 
 ## Overview
 

@@ -38,7 +38,7 @@ Following Simon Willison's philosophy, each commit should include:
 
 ## Commit Message Format
 
-\'\'\'
+```
 [Type] Brief description (#issue)
 
 Implementation:
@@ -51,7 +51,7 @@ Documentation:
 - What docs were updated
 
 Closes #issue
-\'\'\'
+```
 
 ## Types
 

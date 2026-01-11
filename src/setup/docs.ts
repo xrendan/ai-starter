@@ -1,33 +1,26 @@
-package setup
+import { mkdir, writeFile } from 'fs/promises';
+import { join } from 'path';
+import chalk from 'chalk';
 
-import (
-	"fmt"
-	"os"
-	"path/filepath"
-)
+export async function setupDocs(projectName: string): Promise<void> {
+  // Create docs directory structure
+  const dirs = [
+    'docs',
+    'docs/adr',
+    'docs/api',
+    'docs/guides',
+    'docs/prompts',
+    'docs/development',
+  ];
 
-// SetupDocs creates the documentation structure with MkDocs
-func SetupDocs(projectName string) error {
-	// Create docs directory structure
-	dirs := []string{
-		"docs",
-		"docs/adr",         // Architectural Decision Records
-		"docs/api",         // API documentation
-		"docs/guides",      // User guides
-		"docs/prompts",     // AI prompts and context
-		"docs/development", // Development documentation
-	}
+  for (const dir of dirs) {
+    await mkdir(dir, { recursive: true });
+  }
 
-	for _, dir := range dirs {
-		if err := os.MkdirAll(dir, 0755); err != nil {
-			return fmt.Errorf("failed to create %s: %w", dir, err)
-		}
-	}
-
-	// Create mkdocs.yml configuration
-	mkdocsConfig := fmt.Sprintf(`site_name: %s
-site_description: AI-driven repository for %s
-repo_url: https://github.com/xrendan/%s
+  // Create mkdocs.yml configuration
+  const mkdocsConfig = `site_name: ${projectName}
+site_description: AI-driven repository for ${projectName}
+repo_url: https://github.com/xrendan/${projectName}
 
 theme:
   name: material
@@ -81,16 +74,14 @@ plugins:
   - search
   - git-revision-date-localized:
       enable_creation_date: true
-`, projectName, projectName, projectName)
+`;
 
-	if err := os.WriteFile("mkdocs.yml", []byte(mkdocsConfig), 0644); err != nil {
-		return fmt.Errorf("failed to create mkdocs.yml: %w", err)
-	}
+  await writeFile('mkdocs.yml', mkdocsConfig);
 
-	// Create index page
-	indexContent := fmt.Sprintf(`# %s
+  // Create index page
+  const indexContent = `# ${projectName}
 
-Welcome to the %s documentation.
+Welcome to the ${projectName} documentation.
 
 ## Overview
 
@@ -113,14 +104,26 @@ Review our [Architectural Decision Records](adr/index.md) to understand key desi
 ## Contributing
 
 Please read our [Contributing Guide](development/contributing.md) before submitting changes.
-`, projectName, projectName)
+`;
 
-	if err := os.WriteFile("docs/index.md", []byte(indexContent), 0644); err != nil {
-		return fmt.Errorf("failed to create docs/index.md: %w", err)
-	}
+  await writeFile('docs/index.md', indexContent);
 
-	// Create ADR index
-	adrIndex := `# Architectural Decision Records
+  // Create ADR files
+  await createADRFiles();
+
+  // Create development docs
+  await createDevelopmentDocs(projectName);
+
+  // Create other doc sections
+  await createPromptsIndex();
+  await createGuidesIndex();
+  await createRequirements();
+
+  console.log(chalk.green('✓ Documentation structure created'));
+}
+
+async function createADRFiles(): Promise<void> {
+  const adrIndex = `# Architectural Decision Records
 
 This directory contains records of architectural decisions made in this project.
 
@@ -143,79 +146,12 @@ Each ADR should include:
 - [ADR-001: Use MkDocs for Documentation](001-use-mkdocs.md)
 - [ADR-002: Enforce Perfect Commit Structure](002-perfect-commits.md)
 - [ADR-003: Track AI Prompts with git-ai](003-track-ai-prompts.md)
-`
+- [ADR-004: Use Bun and TypeScript for CLI Tool](004-use-bun-typescript.md)
+`;
 
-	if err := os.WriteFile("docs/adr/index.md", []byte(adrIndex), 0644); err != nil {
-		return fmt.Errorf("failed to create ADR index: %w", err)
-	}
+  await writeFile('docs/adr/index.md', adrIndex);
 
-	// Create sample ADRs
-	if err := createSampleADRs(); err != nil {
-		return err
-	}
-
-	// Create other documentation files
-	if err := createDevelopmentDocs(projectName); err != nil {
-		return err
-	}
-
-	// Create prompts documentation
-	promptsIndex := `# AI Prompts
-
-This directory contains important AI prompts and context used in developing this project.
-
-## Why Track Prompts?
-
-AI prompts are the new source code. Just as we track code changes, we should track the prompts and context that generate code.
-
-## Organization
-
-- **Context**: Important context and background information
-- **Templates**: Reusable prompt templates
-- **Examples**: Example prompts and their results
-
-## Best Practices
-
-1. Document prompts that generate significant code
-2. Include context about why specific approaches were chosen
-3. Track iterations and refinements
-4. Link prompts to their corresponding commits
-`
-
-	if err := os.WriteFile("docs/prompts/index.md", []byte(promptsIndex), 0644); err != nil {
-		return fmt.Errorf("failed to create prompts index: %w", err)
-	}
-
-	// Create guides index
-	guidesIndex := `# Guides
-
-User guides and tutorials for this project.
-
-## Available Guides
-
-Add your guides here as you create them.
-`
-
-	if err := os.WriteFile("docs/guides/index.md", []byte(guidesIndex), 0644); err != nil {
-		return fmt.Errorf("failed to create guides index: %w", err)
-	}
-
-	// Create requirements.txt for MkDocs
-	requirementsContent := `mkdocs>=1.5.0
-mkdocs-material>=9.0.0
-mkdocs-git-revision-date-localized-plugin>=1.2.0
-`
-
-	if err := os.WriteFile("docs/requirements.txt", []byte(requirementsContent), 0644); err != nil {
-		return fmt.Errorf("failed to create requirements.txt: %w", err)
-	}
-
-	fmt.Println("✓ Documentation structure created")
-	return nil
-}
-
-func createSampleADRs() error {
-	adr001 := `# ADR-001: Use MkDocs for Documentation
+  const adr001 = `# ADR-001: Use MkDocs for Documentation
 
 **Status**: Accepted
 
@@ -252,9 +188,9 @@ We will use MkDocs with the Material theme for all project documentation.
 - GitBook: More features but external hosting
 - Jekyll: More complex configuration
 - Docusaurus: React-based, heavier weight
-`
+`;
 
-	adr002 := `# ADR-002: Enforce Perfect Commit Structure
+  const adr002 = `# ADR-002: Enforce Perfect Commit Structure
 
 **Status**: Accepted
 
@@ -296,9 +232,9 @@ We will enforce commit structure through:
 - Commit template in .gitmessage
 - commit-msg hook for validation
 - CI checks for test and doc changes
-`
+`;
 
-	adr003 := `# ADR-003: Track AI Prompts with git-ai
+  const adr003 = `# ADR-003: Track AI Prompts with git-ai
 
 **Status**: Accepted
 
@@ -340,29 +276,62 @@ We will use git-ai to:
 - Manual prompt documentation: Too error-prone
 - Comments in code: Clutters codebase
 - Separate prompt repository: Loses connection to code
-`
+`;
 
-	files := map[string]string{
-		"docs/adr/001-use-mkdocs.md":       adr001,
-		"docs/adr/002-perfect-commits.md":  adr002,
-		"docs/adr/003-track-ai-prompts.md": adr003,
-	}
+  const adr004 = `# ADR-004: Use Bun and TypeScript for CLI Tool
 
-	for path, content := range files {
-		if err := os.WriteFile(path, []byte(content), 0644); err != nil {
-			return fmt.Errorf("failed to create %s: %w", path, err)
-		}
-	}
+**Status**: Accepted
 
-	return nil
+**Date**: 2026-01-11
+
+## Context
+
+We need a fast, modern runtime for our CLI tool that provides:
+- Fast startup times
+- Built-in TypeScript support
+- Easy distribution as a single binary
+- Good developer experience
+- Cross-platform compatibility
+
+## Decision
+
+We will use Bun runtime with TypeScript for the CLI tool, along with Commander.js for argument parsing.
+
+## Consequences
+
+**Positive**:
+- Bun is significantly faster than Node.js
+- Native TypeScript support without transpilation
+- Can compile to single executable binary
+- Modern JavaScript features available
+- Built-in test runner
+- Better developer experience
+
+**Negative**:
+- Bun is newer and less mature than Node.js
+- Smaller ecosystem compared to Node.js
+- Team needs to install Bun
+
+## Alternatives Considered
+
+- Go: Requires compilation, steeper learning curve
+- Node.js: Slower startup, requires separate TypeScript setup
+- Deno: Good alternative but less ecosystem support
+- Rust: Fast but much steeper learning curve
+`;
+
+  await writeFile('docs/adr/001-use-mkdocs.md', adr001);
+  await writeFile('docs/adr/002-perfect-commits.md', adr002);
+  await writeFile('docs/adr/003-track-ai-prompts.md', adr003);
+  await writeFile('docs/adr/004-use-bun-typescript.md', adr004);
 }
 
-func createDevelopmentDocs(projectName string) error {
-	setupGuide := fmt.Sprintf(`# Setup Guide
+async function createDevelopmentDocs(projectName: string): Promise<void> {
+  const setupGuide = `# Setup Guide
 
 ## Prerequisites
 
-- Go 1.21 or higher
+- Bun 1.0 or higher
 - Git
 - Python 3.8+ (for documentation)
 - Make (optional)
@@ -370,47 +339,53 @@ func createDevelopmentDocs(projectName string) error {
 ## Installation
 
 1. Clone the repository:
-   \'\'\'bash
-   git clone https://github.com/xrendan/%s.git
-   cd %s
-   \'\'\'
+   \`\`\`bash
+   git clone https://github.com/xrendan/${projectName}.git
+   cd ${projectName}
+   \`\`\`
 
 2. Install dependencies:
-   \'\'\'bash
-   go mod download
-   \'\'\'
+   \`\`\`bash
+   bun install
+   \`\`\`
 
 3. Install git-ai for prompt tracking:
-   \'\'\'bash
+   \`\`\`bash
    curl -sSL https://usegitai.com/install.sh | bash
-   \'\'\'
+   \`\`\`
 
 4. Install documentation tools:
-   \'\'\'bash
+   \`\`\`bash
    pip install -r docs/requirements.txt
-   \'\'\'
+   \`\`\`
 
 ## Development
 
 ### Building
 
-\'\'\'bash
-go build -o ai .
-\'\'\'
+\`\`\`bash
+bun run build
+\`\`\`
+
+### Building Binary
+
+\`\`\`bash
+bun run build:binary
+\`\`\`
 
 ### Testing
 
-\'\'\'bash
-go test ./...
-\'\'\'
+\`\`\`bash
+bun test
+\`\`\`
 
 ### Documentation
 
 Preview documentation locally:
 
-\'\'\'bash
+\`\`\`bash
 mkdocs serve
-\'\'\'
+\`\`\`
 
 Then visit http://localhost:8000
 
@@ -425,12 +400,12 @@ This project follows the "perfect commit" structure:
 
 Use the commit template:
 
-\'\'\'bash
+\`\`\`bash
 git config commit.template .gitmessage
-\'\'\'
-`, projectName, projectName)
+\`\`\`
+`;
 
-	contributingGuide := `# Contributing Guide
+  const contributingGuide = `# Contributing Guide
 
 Thank you for contributing! This guide will help you make effective contributions.
 
@@ -470,7 +445,7 @@ Following Simon Willison's philosophy, each commit should include:
 
 ## Commit Message Format
 
-\'\'\'
+\`\`\`
 [Type] Brief description (#issue)
 
 Implementation:
@@ -483,7 +458,7 @@ Documentation:
 - What docs were updated
 
 Closes #issue
-\'\'\'
+\`\`\`
 
 ## Types
 
@@ -501,9 +476,9 @@ All changes require:
 - Updated documentation
 - Code review approval
 - CI/CD checks passing
-`
+`;
 
-	testingGuide := `# Testing Guide
+  const testingGuide = `# Testing Guide
 
 ## Test Philosophy
 
@@ -515,26 +490,21 @@ All changes require:
 ## Running Tests
 
 Run all tests:
-\'\'\'bash
-go test ./...
-\'\'\'
+\`\`\`bash
+bun test
+\`\`\`
 
-Run with coverage:
-\'\'\'bash
-go test -cover ./...
-\'\'\'
-
-Run verbose:
-\'\'\'bash
-go test -v ./...
-\'\'\'
+Run with watch mode:
+\`\`\`bash
+bun test --watch
+\`\`\`
 
 ## Writing Tests
 
 ### Unit Tests
 
 - Test individual functions and methods
-- Use table-driven tests for multiple cases
+- Use Bun's test framework
 - Mock external dependencies
 
 ### Integration Tests
@@ -545,35 +515,16 @@ go test -v ./...
 
 ### Example
 
-\'\'\'go
-func TestExample(t *testing.T) {
-    tests := []struct {
-        name    string
-        input   string
-        want    string
-        wantErr bool
-    }{
-        {
-            name:  "valid input",
-            input: "test",
-            want:  "result",
-        },
-        // Add more cases
-    }
+\`\`\`typescript
+import { describe, test, expect } from 'bun:test';
 
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            got, err := Example(tt.input)
-            if (err != nil) != tt.wantErr {
-                t.Errorf("unexpected error: %v", err)
-            }
-            if got != tt.want {
-                t.Errorf("got %v, want %v", got, tt.want)
-            }
-        })
-    }
-}
-\'\'\'
+describe('example', () => {
+  test('should work correctly', () => {
+    const result = exampleFunction('input');
+    expect(result).toBe('expected');
+  });
+});
+\`\`\`
 
 ## CI/CD
 
@@ -583,25 +534,58 @@ Tests run automatically on:
 - Before deployment
 
 All tests must pass before merging.
-`
+`;
 
-	files := map[string]string{
-		"docs/development/setup.md":        setupGuide,
-		"docs/development/contributing.md": contributingGuide,
-		"docs/development/testing.md":      testingGuide,
-	}
+  await mkdir('docs/development', { recursive: true });
+  await writeFile('docs/development/setup.md', setupGuide);
+  await writeFile('docs/development/contributing.md', contributingGuide);
+  await writeFile('docs/development/testing.md', testingGuide);
+}
 
-	for path, content := range files {
-		// Create directory if it doesn't exist
-		dir := filepath.Dir(path)
-		if err := os.MkdirAll(dir, 0755); err != nil {
-			return fmt.Errorf("failed to create directory %s: %w", dir, err)
-		}
+async function createPromptsIndex(): Promise<void> {
+  const promptsIndex = `# AI Prompts
 
-		if err := os.WriteFile(path, []byte(content), 0644); err != nil {
-			return fmt.Errorf("failed to create %s: %w", path, err)
-		}
-	}
+This directory contains important AI prompts and context used in developing this project.
 
-	return nil
+## Why Track Prompts?
+
+AI prompts are the new source code. Just as we track code changes, we should track the prompts and context that generate code.
+
+## Organization
+
+- **Context**: Important context and background information
+- **Templates**: Reusable prompt templates
+- **Examples**: Example prompts and their results
+
+## Best Practices
+
+1. Document prompts that generate significant code
+2. Include context about why specific approaches were chosen
+3. Track iterations and refinements
+4. Link prompts to their corresponding commits
+`;
+
+  await writeFile('docs/prompts/index.md', promptsIndex);
+}
+
+async function createGuidesIndex(): Promise<void> {
+  const guidesIndex = `# Guides
+
+User guides and tutorials for this project.
+
+## Available Guides
+
+Add your guides here as you create them.
+`;
+
+  await writeFile('docs/guides/index.md', guidesIndex);
+}
+
+async function createRequirements(): Promise<void> {
+  const requirementsContent = `mkdocs>=1.5.0
+mkdocs-material>=9.0.0
+mkdocs-git-revision-date-localized-plugin>=1.2.0
+`;
+
+  await writeFile('docs/requirements.txt', requirementsContent);
 }

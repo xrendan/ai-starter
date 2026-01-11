@@ -1,6 +1,6 @@
-site_name: ai-starter
-site_description: AI-driven repository for ai-starter
-repo_url: https://github.com/xrendan/ai-starter
+site_name: test-project
+site_description: AI-driven repository for test-project
+repo_url: https://github.com/xrendan/test-project
 
 theme:
   name: material

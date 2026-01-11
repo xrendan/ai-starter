@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Go 1.21 or higher
+- Bun 1.0 or higher
 - Git
 - Python 3.8+ (for documentation)
 - Make (optional)
@@ -10,47 +10,53 @@
 ## Installation
 
 1. Clone the repository:
-   \'\'\'bash
-   git clone https://github.com/xrendan/ai-starter.git
-   cd ai-starter
-   \'\'\'
+   ```bash
+   git clone https://github.com/xrendan/test-project.git
+   cd test-project
+   ```
 
 2. Install dependencies:
-   \'\'\'bash
-   go mod download
-   \'\'\'
+   ```bash
+   bun install
+   ```
 
 3. Install git-ai for prompt tracking:
-   \'\'\'bash
+   ```bash
    curl -sSL https://usegitai.com/install.sh | bash
-   \'\'\'
+   ```
 
 4. Install documentation tools:
-   \'\'\'bash
+   ```bash
    pip install -r docs/requirements.txt
-   \'\'\'
+   ```
 
 ## Development
 
 ### Building
 
-\'\'\'bash
-go build -o ai .
-\'\'\'
+```bash
+bun run build
+```
+
+### Building Binary
+
+```bash
+bun run build:binary
+```
 
 ### Testing
 
-\'\'\'bash
-go test ./...
-\'\'\'
+```bash
+bun test
+```
 
 ### Documentation
 
 Preview documentation locally:
 
-\'\'\'bash
+```bash
 mkdocs serve
-\'\'\'
+```
 
 Then visit http://localhost:8000
 
@@ -65,6 +71,6 @@ This project follows the "perfect commit" structure:
 
 Use the commit template:
 
-\'\'\'bash
+```bash
 git config commit.template .gitmessage
-\'\'\'
+```
