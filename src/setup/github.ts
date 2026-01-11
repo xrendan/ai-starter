@@ -1,8 +1,8 @@
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import chalk from 'chalk';
 
-export async function setupGithubActions(projectName: string): Promise<void> {
+export async function setupGithubActions(_projectName: string): Promise<void> {
   const workflowsDir = join('.github', 'workflows');
   await mkdir(workflowsDir, { recursive: true });
 

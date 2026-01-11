@@ -1,7 +1,7 @@
-import { writeFile, mkdir } from 'fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import chalk from 'chalk';
 
-export async function setupProjectStructure(projectName: string): Promise<void> {
+export async function setupProjectStructure(_projectName: string): Promise<void> {
   // Create directory structure
   const dirs = ['src', 'src/lib', 'tests', 'scripts'];
 

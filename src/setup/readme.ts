@@ -1,4 +1,4 @@
-import { writeFile } from 'fs/promises';
+import { writeFile } from 'node:fs/promises';
 import chalk from 'chalk';
 
 export async function createReadme(projectName: string): Promise<void> {

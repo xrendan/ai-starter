@@ -1,17 +1,9 @@
-import { mkdir, writeFile } from 'fs/promises';
-import { join } from 'path';
+import { mkdir, writeFile } from 'node:fs/promises';
 import chalk from 'chalk';
 
 export async function setupDocs(projectName: string): Promise<void> {
   // Create docs directory structure
-  const dirs = [
-    'docs',
-    'docs/adr',
-    'docs/api',
-    'docs/guides',
-    'docs/prompts',
-    'docs/development',
-  ];
+  const dirs = ['docs', 'docs/adr', 'docs/api', 'docs/guides', 'docs/prompts', 'docs/development'];
 
   for (const dir of dirs) {
     await mkdir(dir, { recursive: true });

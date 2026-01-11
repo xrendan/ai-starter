@@ -1,5 +1,4 @@
 import { $ } from 'bun';
-import { existsSync } from 'fs';
 import chalk from 'chalk';
 
 export async function installGitAI(): Promise<void> {

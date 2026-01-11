@@ -1,5 +1,5 @@
-import { writeFile, mkdir, chmod } from 'fs/promises';
-import { join } from 'path';
+import { chmod, mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { $ } from 'bun';
 import chalk from 'chalk';
 

@@ -1,13 +1,13 @@
+import { basename, resolve } from 'node:path';
+import chalk from 'chalk';
 import { Command } from 'commander';
-import { resolve, basename } from 'path';
-import { initGit } from '../setup/git';
-import { setupDocs } from '../setup/docs';
 import { setupCommitTemplates } from '../setup/commits';
+import { setupDocs } from '../setup/docs';
+import { initGit } from '../setup/git';
+import { installGitAI } from '../setup/git-ai';
 import { setupGithubActions } from '../setup/github';
 import { setupProjectStructure } from '../setup/project';
 import { createReadme } from '../setup/readme';
-import { installGitAI } from '../setup/git-ai';
-import chalk from 'chalk';
 
 interface InitOptions {
   name?: string;
@@ -64,13 +64,15 @@ export const initCommand = new Command('init')
       console.log('   1. Review the generated documentation in docs/');
       console.log('   2. Update docs/adr/ with your architectural decisions');
       console.log('   3. Follow the commit template when making changes');
-      console.log('   4. Run \'mkdocs serve\' to preview documentation');
+      console.log("   4. Run 'mkdocs serve' to preview documentation");
       if (!options.skipGitAi) {
         console.log('   5. git-ai is configured to track AI-generated code');
       }
       console.log('   6. Push to GitHub to trigger CI/CD workflows');
     } catch (error) {
-      console.error(chalk.red(`\n❌ Error: ${error instanceof Error ? error.message : String(error)}`));
+      console.error(
+        chalk.red(`\n❌ Error: ${error instanceof Error ? error.message : String(error)}`)
+      );
       process.exit(1);
     }
   });
