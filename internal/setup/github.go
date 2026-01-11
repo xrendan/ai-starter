@@ -249,7 +249,7 @@ jobs:
 	}
 
 	// Create PR template
-	prTemplateDir := filepath.Join(".github")
+	prTemplateDir := ".github"
 	prTemplate := `## Description
 
 <!-- Provide a brief description of the changes -->

@@ -12,7 +12,7 @@ func TestSetupDocs(t *testing.T) {
 	tmpDir := t.TempDir()
 	originalDir, err := os.Getwd()
 	require.NoError(t, err)
-	defer os.Chdir(originalDir)
+	defer os.Chdir(originalDir) //nolint:errcheck // Acceptable in cleanup code
 
 	err = os.Chdir(tmpDir)
 	require.NoError(t, err)
@@ -64,7 +64,7 @@ func TestSetupCommitTemplates(t *testing.T) {
 	tmpDir := t.TempDir()
 	originalDir, err := os.Getwd()
 	require.NoError(t, err)
-	defer os.Chdir(originalDir)
+	defer os.Chdir(originalDir) //nolint:errcheck // Acceptable in cleanup code
 
 	err = os.Chdir(tmpDir)
 	require.NoError(t, err)
@@ -107,7 +107,7 @@ func TestSetupGithubActions(t *testing.T) {
 	tmpDir := t.TempDir()
 	originalDir, err := os.Getwd()
 	require.NoError(t, err)
-	defer os.Chdir(originalDir)
+	defer os.Chdir(originalDir) //nolint:errcheck // Acceptable in cleanup code
 
 	err = os.Chdir(tmpDir)
 	require.NoError(t, err)
@@ -142,7 +142,7 @@ func TestSetupProjectStructure(t *testing.T) {
 	tmpDir := t.TempDir()
 	originalDir, err := os.Getwd()
 	require.NoError(t, err)
-	defer os.Chdir(originalDir)
+	defer os.Chdir(originalDir) //nolint:errcheck // Acceptable in cleanup code
 
 	err = os.Chdir(tmpDir)
 	require.NoError(t, err)
@@ -186,7 +186,7 @@ func TestCreateReadme(t *testing.T) {
 	tmpDir := t.TempDir()
 	originalDir, err := os.Getwd()
 	require.NoError(t, err)
-	defer os.Chdir(originalDir)
+	defer os.Chdir(originalDir) //nolint:errcheck // Acceptable in cleanup code
 
 	err = os.Chdir(tmpDir)
 	require.NoError(t, err)
@@ -207,7 +207,7 @@ func TestInitGit(t *testing.T) {
 	tmpDir := t.TempDir()
 	originalDir, err := os.Getwd()
 	require.NoError(t, err)
-	defer os.Chdir(originalDir)
+	defer os.Chdir(originalDir) //nolint:errcheck // Acceptable in cleanup code
 
 	err = os.Chdir(tmpDir)
 	require.NoError(t, err)

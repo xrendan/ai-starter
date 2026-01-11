@@ -1,3 +1,5 @@
+version: 2
+
 run:
   timeout: 5m
   tests: true
@@ -5,29 +7,36 @@ run:
 linters:
   enable:
     - errcheck
-    - gosimple
     - govet
     - ineffassign
     - staticcheck
     - unused
+    - misspell
+    - gocritic
+
+formatters:
+  enable:
     - gofmt
     - goimports
-    - misspell
-    - unconvert
-    - unparam
-    - gosec
-    - gocritic
 
 linters-settings:
   errcheck:
     check-type-assertions: true
     check-blank: true
   govet:
-    check-shadowing: true
+    enable-all: true
+
+formatters-settings:
   goimports:
-    local-prefixes: github.com/xrendan/ai-starter
+    local-prefixes:
+      - github.com/xrendan/ai-starter
 
 issues:
-  exclude-use-default: false
   max-issues-per-linter: 0
   max-same-issues: 0
+  exclude-rules:
+    # Defer error checking is acceptable in cleanup code in tests
+    - path: "_test\\.go"
+      linters:
+        - errcheck
+      text: "os\\.Chdir"

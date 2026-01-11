@@ -30,7 +30,7 @@ func TestInitCommand(t *testing.T) {
 		// Change to temp directory
 		originalDir, err := os.Getwd()
 		require.NoError(t, err)
-		defer os.Chdir(originalDir)
+		defer os.Chdir(originalDir) //nolint:errcheck // Acceptable in cleanup code
 
 		testDir := filepath.Join(tmpDir, "test-project")
 		err = os.MkdirAll(testDir, 0755)

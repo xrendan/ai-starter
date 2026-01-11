@@ -11,11 +11,11 @@ func SetupDocs(projectName string) error {
 	// Create docs directory structure
 	dirs := []string{
 		"docs",
-		"docs/adr",           // Architectural Decision Records
-		"docs/api",           // API documentation
-		"docs/guides",        // User guides
-		"docs/prompts",       // AI prompts and context
-		"docs/development",   // Development documentation
+		"docs/adr",         // Architectural Decision Records
+		"docs/api",         // API documentation
+		"docs/guides",      // User guides
+		"docs/prompts",     // AI prompts and context
+		"docs/development", // Development documentation
 	}
 
 	for _, dir := range dirs {
