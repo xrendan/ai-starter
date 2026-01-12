@@ -1,0 +1,46 @@
+# [Type] Brief description (#issue)
+#
+# Type: feat|fix|docs|refactor|test|chore
+#
+# Perfect Commit Structure (Simon Willison):
+# 1. Implementation - a single, focused change
+# 2. Tests - demonstrate it works
+# 3. Documentation - keep docs in sync
+# 4. Issue Link - provide context
+#
+# ============================================
+
+# Implementation:
+# - What changed and why
+# -
+
+# Tests:
+# - What tests were added/modified
+# -
+
+# Documentation:
+# - What docs were updated
+# -
+
+# Issue Context:
+# - Reference issue number
+# - Closes #
+
+# ============================================
+# Example:
+# feat: Add user authentication (#42)
+#
+# Implementation:
+# - Added JWT-based authentication middleware
+# - Implemented login and logout endpoints
+#
+# Tests:
+# - Added auth middleware tests
+# - Added integration tests for login flow
+#
+# Documentation:
+# - Updated API documentation with auth endpoints
+# - Added authentication guide
+#
+# Closes #42
+# ============================================
