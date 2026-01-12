@@ -35,6 +35,8 @@ Thumbs.db
 
 # Documentation build
 site/
+docs/.vitepress/dist
+docs/.vitepress/cache
 
 # Temporary files
 tmp/

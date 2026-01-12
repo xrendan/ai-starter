@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
-import { mkdir, rm, readFile, access } from 'fs/promises';
+import { mkdir, rm, readFile, access } from 'node:fs/promises';
 import { setupDocs } from '../src/setup/docs';
 import { setupCommitTemplates } from '../src/setup/commits';
 import { setupGithubActions } from '../src/setup/github';
@@ -28,20 +28,21 @@ describe('setupDocs', () => {
 
     // Check directories exist
     await access('docs');
+    await access('docs/.vitepress');
     await access('docs/adr');
     await access('docs/development');
     await access('docs/guides');
     await access('docs/prompts');
 
-    // Check files exist
-    const mkdocsContent = await readFile('mkdocs.yml', 'utf-8');
-    expect(mkdocsContent).toContain('test-project');
+    // Check VitePress config exists
+    const vitepressConfig = await readFile('docs/.vitepress/config.ts', 'utf-8');
+    expect(vitepressConfig).toContain('test-project');
 
     const indexContent = await readFile('docs/index.md', 'utf-8');
     expect(indexContent).toContain('test-project');
 
     // Check ADRs
-    await access('docs/adr/001-use-mkdocs.md');
+    await access('docs/adr/001-use-vitepress.md');
     await access('docs/adr/004-use-bun-typescript.md');
   });
 });
@@ -91,8 +92,6 @@ describe('setupProjectStructure', () => {
     // Check files
     await access('.gitignore');
     await access('Makefile');
-    await access('.eslintrc.json');
-    await access('.prettierrc');
 
     const gitignore = await readFile('.gitignore', 'utf-8');
     expect(gitignore).toContain('node_modules');

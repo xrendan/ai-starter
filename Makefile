@@ -1,6 +1,6 @@
 # Makefile for ai-starter
 
-.PHONY: build test lint format check clean install docs help
+.PHONY: build test lint format check clean install docs docs-build docs-preview help
 
 # Default target
 .DEFAULT_GOAL := help
@@ -59,17 +59,17 @@ install: ## Install dependencies
 # Serve documentation
 docs: ## Serve documentation locally
 	@echo "Starting documentation server..."
-	mkdocs serve
+	bun run docs:dev
 
 # Build documentation
 docs-build: ## Build documentation
 	@echo "Building documentation..."
-	mkdocs build
+	bun run docs:build
 
-# Deploy documentation
-docs-deploy: ## Deploy documentation to GitHub Pages
-	@echo "Deploying documentation..."
-	mkdocs gh-deploy
+# Preview documentation build
+docs-preview: ## Preview documentation build
+	@echo "Previewing documentation..."
+	bun run docs:preview
 
 # Show help
 help: ## Show this help message

@@ -3,72 +3,79 @@ import chalk from 'chalk';
 
 export async function setupDocs(projectName: string): Promise<void> {
   // Create docs directory structure
-  const dirs = ['docs', 'docs/adr', 'docs/api', 'docs/guides', 'docs/prompts', 'docs/development'];
+  const dirs = [
+    'docs',
+    'docs/.vitepress',
+    'docs/adr',
+    'docs/api',
+    'docs/guides',
+    'docs/prompts',
+    'docs/development',
+  ];
 
   for (const dir of dirs) {
     await mkdir(dir, { recursive: true });
   }
 
-  // Create mkdocs.yml configuration
-  const mkdocsConfig = `site_name: ${projectName}
-site_description: AI-driven repository for ${projectName}
-repo_url: https://github.com/xrendan/${projectName}
+  // Create VitePress configuration
+  const vitepressConfig = `import { defineConfig } from 'vitepress';
 
-theme:
-  name: material
-  palette:
-    - scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-    - scheme: slate
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
-  features:
-    - navigation.tabs
-    - navigation.sections
-    - navigation.expand
-    - search.suggest
-    - search.highlight
-    - content.code.copy
+export default defineConfig({
+  title: '${projectName}',
+  description: 'AI-driven repository for ${projectName}',
+  
+  themeConfig: {
+    nav: [
+      { text: 'Home', link: '/' },
+      { text: 'Guide', link: '/development/setup' },
+      { text: 'ADRs', link: '/adr/' },
+    ],
 
-nav:
-  - Home: index.md
-  - Architecture:
-      - Overview: adr/index.md
-  - Development:
-      - Setup: development/setup.md
-      - Contributing: development/contributing.md
-      - Testing: development/testing.md
-  - Guides: guides/index.md
-  - AI Prompts: prompts/index.md
+    sidebar: [
+      {
+        text: 'Architecture',
+        items: [
+          { text: 'Overview', link: '/adr/' },
+          { text: 'Use VitePress', link: '/adr/001-use-vitepress' },
+          { text: 'Perfect Commits', link: '/adr/002-perfect-commits' },
+          { text: 'Track AI Prompts', link: '/adr/003-track-ai-prompts' },
+          { text: 'Use Bun & TypeScript', link: '/adr/004-use-bun-typescript' },
+        ],
+      },
+      {
+        text: 'Development',
+        items: [
+          { text: 'Setup', link: '/development/setup' },
+          { text: 'Contributing', link: '/development/contributing' },
+          { text: 'Testing', link: '/development/testing' },
+        ],
+      },
+      {
+        text: 'Guides',
+        items: [
+          { text: 'Overview', link: '/guides/' },
+        ],
+      },
+      {
+        text: 'AI Prompts',
+        items: [
+          { text: 'Overview', link: '/prompts/' },
+        ],
+      },
+    ],
 
-markdown_extensions:
-  - admonition
-  - codehilite
-  - toc:
-      permalink: true
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
-  - pymdownx.details
-  - pymdownx.tabbed:
-      alternate_style: true
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/xrendan/${projectName}' },
+    ],
 
-plugins:
-  - search
-  - git-revision-date-localized:
-      enable_creation_date: true
+    search: {
+      provider: 'local',
+    },
+  },
+});
 `;
 
-  await writeFile('mkdocs.yml', mkdocsConfig);
+  await writeFile('docs/.vitepress/config.ts', vitepressConfig);
 
   // Create index page
   const indexContent = `# ${projectName}
@@ -87,15 +94,15 @@ This repository follows AI-driven development best practices, including:
 
 ## Quick Start
 
-See the [Setup Guide](development/setup.md) to get started.
+See the [Setup Guide](./development/setup) to get started.
 
 ## Architecture
 
-Review our [Architectural Decision Records](adr/index.md) to understand key design decisions.
+Review our [Architectural Decision Records](./adr/) to understand key design decisions.
 
 ## Contributing
 
-Please read our [Contributing Guide](development/contributing.md) before submitting changes.
+Please read our [Contributing Guide](./development/contributing) before submitting changes.
 `;
 
   await writeFile('docs/index.md', indexContent);
@@ -109,7 +116,6 @@ Please read our [Contributing Guide](development/contributing.md) before submitt
   // Create other doc sections
   await createPromptsIndex();
   await createGuidesIndex();
-  await createRequirements();
 
   console.log(chalk.green('✓ Documentation structure created'));
 }
@@ -135,19 +141,19 @@ Each ADR should include:
 
 ## ADRs
 
-- [ADR-001: Use MkDocs for Documentation](001-use-mkdocs.md)
-- [ADR-002: Enforce Perfect Commit Structure](002-perfect-commits.md)
-- [ADR-003: Track AI Prompts with git-ai](003-track-ai-prompts.md)
-- [ADR-004: Use Bun and TypeScript for CLI Tool](004-use-bun-typescript.md)
+- [ADR-001: Use VitePress for Documentation](./001-use-vitepress)
+- [ADR-002: Enforce Perfect Commit Structure](./002-perfect-commits)
+- [ADR-003: Track AI Prompts with git-ai](./003-track-ai-prompts)
+- [ADR-004: Use Bun and TypeScript for CLI Tool](./004-use-bun-typescript)
 `;
 
   await writeFile('docs/adr/index.md', adrIndex);
 
-  const adr001 = `# ADR-001: Use MkDocs for Documentation
+  const adr001 = `# ADR-001: Use VitePress for Documentation
 
 **Status**: Accepted
 
-**Date**: 2026-01-11
+**Date**: 2026-01-12
 
 ## Context
 
@@ -157,29 +163,35 @@ We need a documentation system that:
 - Is easy to write and maintain
 - Generates professional-looking documentation
 - Integrates well with CI/CD
+- Uses TypeScript/JavaScript (matching our tech stack)
 
 ## Decision
 
-We will use MkDocs with the Material theme for all project documentation.
+We will use VitePress for all project documentation.
 
 ## Consequences
 
 **Positive**:
 - Documentation lives in the repository
 - Markdown is easy to write and review
-- Material theme provides excellent UX
+- Fast, Vue-powered static site generation
 - Easy to deploy to GitHub Pages
-- Can validate documentation in CI/CD
+- TypeScript-based (matches our stack)
+- Built-in search functionality
+- Excellent developer experience
+- No Python dependency required
 
 **Negative**:
-- Requires Python for local preview
-- Team needs to learn MkDocs configuration
+- Requires Node.js/Bun for local preview
+- Team needs to learn VitePress configuration
+- Newer tool with smaller ecosystem than MkDocs
 
 ## Alternatives Considered
 
+- MkDocs: Python-based, doesn't match our TypeScript stack
+- Docusaurus: React-based, heavier and more complex
 - GitBook: More features but external hosting
-- Jekyll: More complex configuration
-- Docusaurus: React-based, heavier weight
+- Nextra: Good alternative but less mature
 `;
 
   const adr002 = `# ADR-002: Enforce Perfect Commit Structure
@@ -312,7 +324,7 @@ We will use Bun runtime with TypeScript for the CLI tool, along with Commander.j
 - Rust: Fast but much steeper learning curve
 `;
 
-  await writeFile('docs/adr/001-use-mkdocs.md', adr001);
+  await writeFile('docs/adr/001-use-vitepress.md', adr001);
   await writeFile('docs/adr/002-perfect-commits.md', adr002);
   await writeFile('docs/adr/003-track-ai-prompts.md', adr003);
   await writeFile('docs/adr/004-use-bun-typescript.md', adr004);
@@ -325,7 +337,6 @@ async function createDevelopmentDocs(projectName: string): Promise<void> {
 
 - Bun 1.0 or higher
 - Git
-- Python 3.8+ (for documentation)
 - Make (optional)
 
 ## Installation
@@ -344,11 +355,6 @@ async function createDevelopmentDocs(projectName: string): Promise<void> {
 3. Install git-ai for prompt tracking:
    \`\`\`bash
    curl -sSL https://usegitai.com/install.sh | bash
-   \`\`\`
-
-4. Install documentation tools:
-   \`\`\`bash
-   pip install -r docs/requirements.txt
    \`\`\`
 
 ## Development
@@ -376,10 +382,10 @@ bun test
 Preview documentation locally:
 
 \`\`\`bash
-mkdocs serve
+bun run docs:dev
 \`\`\`
 
-Then visit http://localhost:8000
+Then visit http://localhost:5173
 
 ## Commit Guidelines
 
@@ -571,13 +577,4 @@ Add your guides here as you create them.
 `;
 
   await writeFile('docs/guides/index.md', guidesIndex);
-}
-
-async function createRequirements(): Promise<void> {
-  const requirementsContent = `mkdocs>=1.5.0
-mkdocs-material>=9.0.0
-mkdocs-git-revision-date-localized-plugin>=1.2.0
-`;
-
-  await writeFile('docs/requirements.txt', requirementsContent);
 }

@@ -17,22 +17,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
         with:
-          python-version: '3.x'
+          bun-version: latest
 
       - name: Install dependencies
-        run: |
-          pip install -r docs/requirements.txt
+        run: bun install
 
       - name: Build documentation
-        run: mkdocs build --strict
+        run: bun run docs:build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: docs/.vitepress/dist
 
   deploy:
     environment:

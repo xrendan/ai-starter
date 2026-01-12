@@ -18,7 +18,7 @@ Each ADR should include:
 
 ## ADRs
 
-- [ADR-001: Use MkDocs for Documentation](001-use-mkdocs.md)
-- [ADR-002: Enforce Perfect Commit Structure](002-perfect-commits.md)
-- [ADR-003: Track AI Prompts with git-ai](003-track-ai-prompts.md)
-- [ADR-004: Use Bun and TypeScript for CLI Tool](004-use-bun-typescript.md)
+- [ADR-001: Use VitePress for Documentation](./001-use-vitepress)
+- [ADR-002: Enforce Perfect Commit Structure](./002-perfect-commits)
+- [ADR-003: Track AI Prompts with git-ai](./003-track-ai-prompts)
+- [ADR-004: Use Bun and TypeScript for CLI Tool](./004-use-bun-typescript)
