@@ -4,7 +4,6 @@
 
 - Bun 1.0 or higher
 - Git
-- Python 3.8+ (for documentation)
 - Make (optional)
 
 ## Installation
@@ -23,11 +22,6 @@
 3. Install git-ai for prompt tracking:
    ```bash
    curl -sSL https://usegitai.com/install.sh | bash
-   ```
-
-4. Install documentation tools:
-   ```bash
-   pip install -r docs/requirements.txt
    ```
 
 ## Development
@@ -55,10 +49,10 @@ bun test
 Preview documentation locally:
 
 ```bash
-mkdocs serve
+bun run docs:dev
 ```
 
-Then visit http://localhost:8000
+The dev server will start and automatically open in your browser.
 
 ## Commit Guidelines
 
